@@ -1,7 +1,14 @@
 #include "main.h"
 
+#include "settings.h"
+#include "chassis.h"
+#include "instructions.h"
+
+Chassis chassis(LEFT_PORTS, RIGHT_PORTS);
+
 void initialize() {
 	pros::lcd::initialize();
+	chassis.initialize();
 }
 
 /**
@@ -9,7 +16,9 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+	chassis.stopAllMotors();
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -22,6 +31,13 @@ void disabled() {}
  */
 void competition_initialize() {}
 
+
+Instructions instructions = {
+	{"main:"},
+	{"goto 0.1249, 90"},
+	{}
+};
+
 /**
  * Runs the user autonomous code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -33,7 +49,12 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	for (Instruction& i : instructions) {
+		i.execute(&chassis);
+		pros::delay(5);
+	}
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -50,5 +71,11 @@ void autonomous() {}
  */
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
+
+	while (true) {
+		chassis.op_move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+
+		// other stuff.. TODO (based on robor)
+	}
 	
 }
