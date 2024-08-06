@@ -2,9 +2,8 @@
 
 #include "settings.h"
 #include "chassis.h"
-#include "instructions.h"
 
-Chassis chassis(LEFT_PORTS, RIGHT_PORTS);
+Chassis chassis(LEFT_PORTS, RIGHT_PORTS, RIGHT_TRACKING, LEFT_TRACKING, CENTER_TRACKING);
 
 void initialize() {
 	pros::lcd::initialize();
@@ -31,13 +30,6 @@ void disabled() {
  */
 void competition_initialize() {}
 
-
-Instructions instructions = {
-	{"main:"},
-	{"goto 0.1249, 90"},
-	{}
-};
-
 /**
  * Runs the user autonomous code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -50,10 +42,7 @@ Instructions instructions = {
  * from where it left off.
  */
 void autonomous() {
-	for (Instruction& i : instructions) {
-		i.execute(&chassis);
-		pros::delay(5);
-	}
+	
 }
 
 /**
@@ -74,7 +63,7 @@ void opcontrol() {
 
 	while (true) {
 		chassis.op_move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
-
+		
 		// other stuff.. TODO (based on robor)
 	}
 	
