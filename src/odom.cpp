@@ -1,6 +1,7 @@
 #include "odom.h"
 #include "api.h"
 #include "okapi/api.hpp"
+using namespace okapi;
 
 Odom::Odom(pros::Rotation *right, pros::Rotation *left, pros::Rotation *center, pros::Imu *imu)
 {
