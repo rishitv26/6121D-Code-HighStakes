@@ -65,6 +65,7 @@ void opcontrol() {
 		chassis.op_move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
 		
 		// other stuff.. TODO (based on robor)
+		pros::delay(2);
 	}
 	
 }

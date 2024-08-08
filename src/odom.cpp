@@ -1,5 +1,6 @@
 #include "odom.h"
 #include "api.h"
+#include "okapi/api.hpp"
 
 Odom::Odom(pros::Rotation *right, pros::Rotation *left, pros::Rotation *center, pros::Imu *imu)
 {
@@ -14,6 +15,11 @@ void Odom::initialize(pros::Rotation *r, pros::Rotation *l, pros::Rotation *c, p
     left = l;
     center = c;
     imu = i;
+    auto odomChassis = ChassisControllerBuilder()
+        .withMotors({1, 2}, {-3, -4})
+        .withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
+        .withOdometry() // Use default state mode and update period
+        .buildOdometry(); // Return an OdometryChassisController
 }
 
 void Odom::update()
