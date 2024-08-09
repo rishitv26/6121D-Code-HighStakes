@@ -1,72 +1,58 @@
 #ifndef ODOM_HS_H
 #define ODOM_HS_H
 
-
+// TODO: Improve getTheta and getThetaRadians using IMU sensor.
 class Odom {
 private:
-    double X;
-    double Y;
-    double theta;
-
-    pros::Rotation* right;
-    pros::Rotation* left;
-    pros::Rotation* center;
-    pros::Imu* imu;
+    OdomState state;
+    std::shared_ptr<okapi::OdomChassisController> odomChassis;
 public:
     /**
      * @brief Construct a new Odom object
-     * 
-     * @param right the pointer to right tracking wheel
-     * @param left the pointer to left tracking wheel
-     * @param center the pointer to center tracking wheel
-     * @param imu the pointer to IMU
-     */
-    Odom(pros::Rotation* right, pros::Rotation* left, pros::Rotation* center, pros::Imu* imu);
-
-    /**
-     * @brief Construct a new Odom object
-     * 
-     * If this method is called, initialize() MUST be called.
      */
     Odom();
 
     /**
      * @brief Initialize the odom object with the given parameters.
      * 
-     * @param right the pointer to right tracking wheel
-     * @param left the pointer to left tracking wheel
-     * @param center the pointer to center tracking wheel
-     * @param imu the pointer to IMU
+     * all settings specified in the settings.h
      */
-    void initialize(pros::Rotation* right, pros::Rotation* left, pros::Rotation* center, pros::Imu* imu);
+    void initialize();
 
     /**
      * @brief Updates the X, Y, and theta coordinates
      * 
-     * Must get the X, Y and theta coords using the getting methods.
+     * not neccessary to call before use. Get methods call this beforehand
      */
     void update();
 
     /**
-     * @brief get the X coordinate since the latest update call
+     * @brief get the latest X coordinate
      * 
      * @return X value
      */
     double getX();
 
     /**
-     * @brief get the Y coordinate since the latest update call
+     * @brief get the latest Y coordinate
      * 
      * @return Y value
      */
     double getY();
 
     /**
-     * @brief get the theta coordinate since the latest update call
+     * @brief get the latest theta angle in degrees
      * 
-     * @return Theta value
+     * @return Theta angle as degrees
      */
     double getTheta();
+
+    /**
+     * @brief get the latest theta angle in radians 
+     * 
+     * @return Theta angle as radians
+     */
+    double getThetaRadians();
 
 };
 

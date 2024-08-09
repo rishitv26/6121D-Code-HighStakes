@@ -3,7 +3,7 @@
 #include "settings.h"
 #include "chassis.h"
 
-Chassis chassis(LEFT_PORTS, RIGHT_PORTS, RIGHT_TRACKING, LEFT_TRACKING, CENTER_TRACKING);
+Chassis chassis;
 
 void initialize() {
 	pros::lcd::initialize();

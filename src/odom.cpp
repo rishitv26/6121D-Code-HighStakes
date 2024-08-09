@@ -1,44 +1,53 @@
 #include "odom.h"
 #include "api.h"
+#include "settings.h"
 #include "okapi/api.hpp"
 using namespace okapi;
 
-Odom::Odom(pros::Rotation *right, pros::Rotation *left, pros::Rotation *center, pros::Imu *imu)
-{
-    initialize(right, left, center, imu);
-}
-
 Odom::Odom() {}
 
-void Odom::initialize(pros::Rotation *r, pros::Rotation *l, pros::Rotation *c, pros::Imu *i)
+void Odom::initialize()
 {
-    right = r;
-    left = l;
-    center = c;
-    imu = i;
-    auto odomChassis = ChassisControllerBuilder()
-        .withMotors({1, 2}, {-3, -4})
-        .withDimensions(AbstractMotor::gearset::green, {{4_in, 11.5_in}, imev5GreenTPR})
-        .withOdometry() // Use default state mode and update period
-        .buildOdometry(); // Return an OdometryChassisController
+    odomChassis = ChassisControllerBuilder()
+        .withMotors(LEFT_PORTS, RIGHT_PORTS)
+        // green gearset, 4 inch wheel diameter, 11.5 inch wheel track
+        .withDimensions(AbstractMotor::gearset::green, {{DRIVETRAIN_WHEEL_INCHES, WHEEL_TRACK_INCHES}, imev5GreenTPR})
+        .withSensors(
+            RotationSensor(LEFT_TRACKING), // left sensor port in settings
+            RotationSensor(RIGHT_TRACKING, true),  // right sensor port in settings
+            RotationSensor(CENTER_TRACKING)  // middle sensor port in settings
+        )
+        // specify the tracking wheels diameter (2.75 in), track (7 in), and TPR (360)
+        // specify the middle encoder distance (1 in) and diameter (2.75 in)
+        .withOdometry({{TRACKING_DIAMETER, PARALLEL_SENSOR_TRACK_WIDTH, MIDDLE_ENCODER_DISTANCE, TRACKING_DIAMETER}, 360}, StateMode::CARTESIAN)
+        .buildOdometry();
 }
 
 void Odom::update()
 {
-    // TODO
+    state = odomChassis->getState();
 }
 
 double Odom::getX()
 {
-    return X;
+    update();
+    return state.x.convert(inch);
 }
 
 double Odom::getY()
 {
-    return Y;
+    update();
+    return state.y.convert(inch);
 }
 
 double Odom::getTheta()
 {
-    return theta;
+    update();
+    return state.theta.convert(degree);
+}
+
+double Odom::getThetaRadians()
+{
+    update();
+    return state.theta.convert(radian);
 }
