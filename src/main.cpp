@@ -1,13 +1,13 @@
 #include "main.h"
 
-#include "settings.h"
-#include "chassis.h"
+// #include "settings.h"
+// #include "chassis.h"
 
-Chassis chassis;
+// Chassis chassis;
 
 void initialize() {
 	pros::lcd::initialize();
-	chassis.initialize();
+	// chassis.initialize();
 }
 
 /**
@@ -16,7 +16,7 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
-	chassis.stopAllMotors();
+	// chassis.stopAllMotors();
 }
 
 /**
@@ -60,12 +60,26 @@ void autonomous() {
  */
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	pros::Motor one(1);
+	pros::Motor two(2);
+	pros::Motor three(3);
+
+	one.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
+	two.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
+	three.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
 
 	while (true) {
-		chassis.op_move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
+		// chassis.op_move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
 		
+		int scale = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+		one.move(scale);
+		two.move(scale);
+		three.move(scale);
+
+		std::cout << (one.get_efficiency() + two.get_efficiency() + three.get_efficiency()) / 3.0 << std::endl;
+
 		// other stuff.. TODO (based on robor)
-		pros::delay(2);
+		pros::delay(20);
 	}
 	
 }
