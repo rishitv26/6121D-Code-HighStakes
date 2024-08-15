@@ -73,25 +73,28 @@ void opcontrol() {
 	pros::Motor one(1);
 	pros::Motor two(2);
 	pros::Motor three(3);
+	ls::TrackingWheel encoder('A', 'B', 2.75);
+	master.clear();
 
 	one.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
 	two.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
 	three.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
 
 	while (true) {
-		odom.compute();
+		// odom.compute();
 
 		int scale = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 		one.move(scale);
 		two.move(scale);
 		three.move(scale);
 
-		pros::lcd::print(0, "%i", (one.get_efficiency() + two.get_efficiency() + three.get_efficiency()) / 3.0);
-		pros::lcd::print(1, "[%f, %f]", odom.getX(), odom.getY());
-		pros::lcd::print(2, "%f", odom.getAngle());
+		std::cout << (one.get_efficiency() + two.get_efficiency() + three.get_efficiency()) / 3.0 << std::endl;
+
+		// std::cout << encoder.getLinearDistance() << "\n";
 
 		// other stuff.. TODO (based on robor)
 		pros::delay(20);
+		pros::lcd::clear_line(1);
 	}
 	
 }
