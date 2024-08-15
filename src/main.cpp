@@ -1,13 +1,23 @@
 #include "main.h"
+#include "LibStoga/libstoga.h"
 
-// #include "settings.h"
-// #include "chassis.h"
+#include "settings.h"
 
-// Chassis chassis;
+ls::TrackingWheel right(RIGHT_TRACKING, 2.75, true);
+ls::TrackingWheel left(LEFT_TRACKING);
+ls::TrackingWheel center(CENTER_TRACKING);
+
+ls::ThreeWheelOdom odom(
+	PARALLEL_SENSOR_TRACK_WIDTH, 
+	PARALLEL_SENSOR_TRACK_WIDTH, 
+	MIDDLE_ENCODER_DISTANCE, 
+	right,
+	left,
+	center
+);
 
 void initialize() {
 	pros::lcd::initialize();
-	// chassis.initialize();
 }
 
 /**
@@ -42,7 +52,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	
+
 }
 
 /**
@@ -69,14 +79,16 @@ void opcontrol() {
 	three.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
 
 	while (true) {
-		// chassis.op_move(master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y));
-		
+		odom.compute();
+
 		int scale = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 		one.move(scale);
 		two.move(scale);
 		three.move(scale);
 
-		std::cout << (one.get_efficiency() + two.get_efficiency() + three.get_efficiency()) / 3.0 << std::endl;
+		pros::lcd::print(0, "%i", (one.get_efficiency() + two.get_efficiency() + three.get_efficiency()) / 3.0);
+		pros::lcd::print(1, "[%f, %f]", odom.getX(), odom.getY());
+		pros::lcd::print(2, "%f", odom.getAngle());
 
 		// other stuff.. TODO (based on robor)
 		pros::delay(20);
